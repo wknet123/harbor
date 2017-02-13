@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Policy } from '../model/policy';
-import { Job } from '../model/job';
+import { Policy } from './policy';
+import { Job } from './job';
 
 @Component({
   selector: 'replicaton',

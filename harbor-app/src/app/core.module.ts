@@ -7,20 +7,21 @@ import { AppComponent } from './app.component';
 import { AccountModule } from './account/account.module';
 import { HarborShellModule } from './harbor-shell/harbor.shell.module';
 import { HarborRoutingModule } from './harbor-routing.module';
-import { SharedModule } from './shared.module';
+
 
 @NgModule({
-    declarations: [
-        AppComponent,
-    ],
-    imports: [
-        SharedModule,
-        AccountModule,
-        HarborShellModule,
-        HarborRoutingModule
-    ],
-    providers: [],
-    bootstrap: [ AppComponent ]
+  imports: [
+      BrowserModule,
+      FormsModule,
+      HttpModule,
+      ClarityModule
+  ],
+  exports: [
+      BrowserModule,
+      FormsModule,
+      HttpModule,
+      ClarityModule
+  ]
 })
-export class AppModule {
+export class CoreModule {
 }

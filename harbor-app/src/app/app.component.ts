@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 // import { Router } from '@angular/router';
 
 @Component({
-    selector: 'my-app',
+    selector: 'harbor-app',
     templateUrl: 'app.component.html',
-    styleUrls: ['app.component.scss']
+    styleUrls: []
 })
 export class AppComponent {
     // constructor(private router: Router) {

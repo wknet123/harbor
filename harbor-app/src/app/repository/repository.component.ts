@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Repo } from '../model/repo';
+import { Repo } from './repo';
 
 
 @Component({

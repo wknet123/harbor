@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Repository } from '../model/repository';
+import { Repository } from '../repository/repository';
 
 @Component({
     selector: 'dashboard',

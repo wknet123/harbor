@@ -68,7 +68,7 @@ export class RepositoryService {
                     return tags;
                   })
                   .catch(error=>{
-                    return tags;
+                    return Observable.of(tags);
                   })
                })
                .catch(error=>Observable.throw(error));

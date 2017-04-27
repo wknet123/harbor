@@ -61,6 +61,7 @@ export class TagRepositoryComponent implements OnInit, OnDestroy {
 
   subscription: Subscription;
 
+
   constructor(
     private route: ActivatedRoute,
     private messageHandlerService: MessageHandlerService,
@@ -118,20 +119,35 @@ export class TagRepositoryComponent implements OnInit, OnDestroy {
 
   retrieve() {
     this.tags = [];
-    if(this.withNotary) {
-      this.repositoryService
-          .listTagsWithVerifiedSignatures(this.repoName)
-          .subscribe(
-            items => this.listTags(items),
-            error => this.messageHandlerService.handleError(error));
-    } else {
-      this.repositoryService
-          .listTags(this.repoName)
-          .subscribe(
-            items => this.listTags(items),
-            error => this.messageHandlerService.handleError(error));
-    }
+    this.repositoryService
+        .listTags(this.repoName)
+        .subscribe(
+          items => this.listTags(items),
+          error => this.messageHandlerService.handleError(error));
+    setTimeout(()=>{
+      if(this.withNotary) {
+        this.repositoryService
+            .listNotarySignatures(this.repoName)
+            .subscribe(
+              signatures => {
+                this.tags.forEach((t, n)=>{
+                  let signed = false;
+                  for(let i = 0; i < signatures.length; i++) {
+                    if (signatures[i].tag === t.tag) {
+                      signed = true;
+                      break;
+                    }
+                  }
+                  this.tags[n].signed = (signed) ? 1 : 0;
+                  this.ref.markForCheck();
+                });
+              },
+              error => console.error('Cannot determine the signature of this tag.'));
+       }
+    }, 50);
   }
+
+
 
   listTags(tags: Tag[]): void {
     tags.forEach(t => {

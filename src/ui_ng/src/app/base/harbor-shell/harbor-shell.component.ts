@@ -100,6 +100,7 @@ export class HarborShellComponent implements OnInit, OnDestroy {
 
     public get isUserExisting(): boolean {
         let account = this.session.getCurrentUser();
+        console.log('Current user status in side-nav:' + JSON.stringify(account));
         return account != null;
     }
 

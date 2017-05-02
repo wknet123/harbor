@@ -14,6 +14,7 @@
 import { Injectable } from '@angular/core';
 import {
   CanActivate, Router,
+  ActivatedRoute,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
   CanActivateChild
@@ -24,7 +25,7 @@ import { CommonRoutes } from '../../shared/shared.const';
 
 @Injectable()
 export class SignInGuard implements CanActivate, CanActivateChild {
-  constructor(private authService: SessionService, private router: Router) { }
+  constructor(private authService: SessionService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> | boolean {
     //Fix overflow issue
@@ -48,22 +49,31 @@ export class SignInGuard implements CanActivate, CanActivateChild {
             console.error(error);
             return resolve(false);
           });
-      } else {
-        let user = this.authService.getCurrentUser();
-        if (user === null) {
-          this.authService.retrieveUser()
-            .then(() => {
-              this.router.navigate([CommonRoutes.HARBOR_DEFAULT]);
-              return resolve(false);
-            })
-            .catch(error => {
-              return resolve(true);
-            });
-        } else {
-          this.router.navigate([CommonRoutes.HARBOR_DEFAULT]);
-          return resolve(false);
-        }
       }
+      // } else {
+        
+        let user = this.authService.getCurrentUser();
+        console.log('user in sign-in guard is:' + JSON.stringify(user));
+        if (user == null) {
+         
+          // this.authService.retrieveUser()
+          //   .then(() => {
+          // this.router.navigate([CommonRoutes.HARBOR_DEFAULT]);
+          //     return resolve(false);
+          //   })
+          //   .catch(error => {
+          // this.router.navigate([CommonRoutes.EMBEDDED_SIGN_IN]);
+          return resolve(false);
+            // });
+          
+        } else {
+          //  
+          
+          // this.router.navigate([CommonRoutes.HARBOR_DEFAULT]);
+         
+        }
+          return resolve(true);
+      // }
     });
   }
 

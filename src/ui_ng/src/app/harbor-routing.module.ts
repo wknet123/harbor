@@ -15,6 +15,8 @@ import { NgModule } from '@angular/core';
 
 import { RouterModule, Routes } from '@angular/router';
 
+import { SessionRoutingResolver } from './shared/session-routing-resolver';
+
 import { SignInComponent } from './account/sign-in/sign-in.component';
 import { HarborShellComponent } from './base/harbor-shell/harbor-shell.component';
 import { ProjectComponent } from './project/project.component';
@@ -60,6 +62,9 @@ const harborRoutes: Routes = [
       {
         path: 'sign-in',
         component: SignInComponent,
+        resolve: {
+          sessionUserResolver: SessionRoutingResolver
+        },
         canActivate: [SignInGuard]
       },
       {

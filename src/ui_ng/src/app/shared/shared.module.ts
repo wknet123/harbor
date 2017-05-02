@@ -16,6 +16,7 @@ import { CoreModule } from '../core/core.module';
 import { CookieService } from 'ngx-cookie';
 
 import { SessionService } from '../shared/session.service';
+import { SessionRoutingResolver } from '../shared/session-routing-resolver';
 import { MessageComponent } from '../global-message/message.component';
 
 import { MessageService } from '../global-message/message.service';
@@ -106,6 +107,7 @@ import { DateValidatorDirective } from '../shared/date-validator.directive';
   ],
   providers: [
     SessionService,
+    SessionRoutingResolver,
     MessageService,
     CookieService,
     ConfirmationDialogService,

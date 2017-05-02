@@ -68,9 +68,9 @@ export class AuthCheckGuard implements CanActivate, CanActivateChild {
 
       let user = this.authService.getCurrentUser();
       if (!user) {
-        this.authService.retrieveUser()
-          .then(() => resolve(true))
-          .catch(error => {
+        // this.authService.retrieveUser()
+        //   .then(() => resolve(true))
+        //   .catch(error => {
             //If is guest, skip it
             if (this.isGuest(route, state)) {
               return resolve(true);
@@ -84,11 +84,10 @@ export class AuthCheckGuard implements CanActivate, CanActivateChild {
               };
               this.router.navigate([CommonRoutes.EMBEDDED_SIGN_IN], navigatorExtra);
               return resolve(false);
-            } else {
-              return resolve(true);
-            }
-          });
+            } 
+          // });
       } else {
+        this.router.navigate(['/harbor','projects']);
         return resolve(true);
       }
     });

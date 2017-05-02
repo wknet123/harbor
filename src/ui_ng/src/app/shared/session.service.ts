@@ -13,6 +13,7 @@
 // limitations under the License.
 import { Injectable } from '@angular/core';
 import { Headers, Http, URLSearchParams } from '@angular/http';
+import { Router } from '@angular/router';
 import 'rxjs/add/operator/toPromise';
 
 import { SessionUser } from './session-user';
@@ -52,7 +53,7 @@ export class SessionService {
         "Content-Type": 'application/x-www-form-urlencoded'
     });
 
-    constructor(private http: Http) { }
+    constructor(private http: Http, private router: Router) { }
 
     //Handle the related exceptions
     handleError(error: any): Promise<any> {
@@ -89,7 +90,7 @@ export class SessionService {
     retrieveUser(): Promise<SessionUser> {
         return this.http.get(currentUserEndpint, { headers: this.headers }).toPromise()
             .then(response => this.currentUser = response.json() as SessionUser)
-            .catch(error => this.handleError(error))
+            .catch(error => this.currentUser = null);
     }
 
     /**

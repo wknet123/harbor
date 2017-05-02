@@ -228,14 +228,16 @@ export class SignInComponent implements AfterViewChecked, OnInit {
 
                 //Remeber me
                 this.remeberMe();
-
+                console.log('Sign-in action successful');
+                // this.router.navigateByUrl('/harbor/projects');
                 //Redirect to the right route
-                if (this.redirectUrl === "") {
-                    //Routing to the default location
-                    this.router.navigateByUrl(CommonRoutes.HARBOR_DEFAULT);
-                } else {
-                    this.router.navigateByUrl(this.redirectUrl);
-                }
+                // if (this.redirectUrl === "") {
+                //     //Routing to the default location
+                //     this.router.navigateByUrl(CommonRoutes.HARBOR_DEFAULT);
+                // } else {
+                //     console.log(this.redirectUrl);
+                //     this.router.navigateByUrl(this.redirectUrl);
+                // }
             })
             .catch(error => {
                 this.handleError(error);

@@ -126,7 +126,7 @@ export class CreateEditEndpointComponent implements AfterViewChecked {
     this.pingStatus = true;
     this.testOngoing = !this.testOngoing;
 
-    let payload: Endpoint = this.initEndpoint;
+    let payload: Endpoint | null = this.initEndpoint;
     if(this.endpointHasChanged) {
       payload.endpoint = this.target.endpoint;
       payload.username = this.target.username;
@@ -211,6 +211,8 @@ export class CreateEditEndpointComponent implements AfterViewChecked {
       payload.password = this.target.password;
       delete payload.name;
     } 
+
+    if(!this.target.id) { return; }
     toPromise<number>(this.endpointService
       .updateEndpoint(this.target.id, payload))
       .then(
@@ -267,20 +269,23 @@ export class CreateEditEndpointComponent implements AfterViewChecked {
         username: this.initVal.username,
         password: this.initVal.password
       };
-      this.targetForm.valueChanges.subscribe(data=>{
-        for(let key in data) {
-          let current = data[key];
-          let origin: string = comparison[key];
-          if(((this.actionType === ActionType.EDIT && this.editable && !current)  || current) && 
-            current !== origin) {
-            this.hasChanged = true;
-            break;
-          } else {
-            this.hasChanged = false;
-            this.inlineAlert.close();
+      let self: CreateEditEndpointComponent | any = this;
+      if(self) {
+        self.targetForm.valueChanges.subscribe((data: any)=>{
+          for(let key in data) {
+            let current = data[key];
+            let origin: string = comparison[key];
+            if(((this.actionType === ActionType.EDIT && this.editable && !current)  || current) && 
+              current !== origin) {
+              this.hasChanged = true;
+              break;
+            } else {
+              this.hasChanged = false;
+              this.inlineAlert.close();
+            }
           }
-        }
-      });
+        });
+      }
     }
   }
 

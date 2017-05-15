@@ -11,11 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 
 import { RepositoryService } from '../service/repository.service';
-import { Repository } from '../service/interface';
+import { Repository, SessionInfo } from '../service/interface';
+
+import { TranslateService } from '@ngx-translate/core';
 
 import { ErrorHandler } from '../error-handler/error-handler';
 import { ConfirmationState, ConfirmationTargets, ConfirmationButtons } from '../shared/shared.const';
@@ -40,7 +41,8 @@ import { REPOSITORY_STYLE } from './repository.component.css';
 export class RepositoryComponent implements OnInit {
   changedRepositories: Repository[];
 
-  projectId: number;
+  @Input() projectId: number;
+  @Input() sessionInfo: SessionInfo;
 
   lastFilteredRepoName: string;
 
@@ -56,7 +58,8 @@ export class RepositoryComponent implements OnInit {
 
   constructor(
     private errorHandler: ErrorHandler,
-    private repositoryService: RepositoryService
+    private repositoryService: RepositoryService,
+    private translateService: TranslateService
   ) {}
 
   confirmDeletion(message: ConfirmationAcknowledgement) {
@@ -69,23 +72,25 @@ export class RepositoryComponent implements OnInit {
         .then(
           response => {
             this.refresh();
-            this.errorHandler.error('REPOSITORY.DELETED_REPO_SUCCESS');
+            this.translateService.get('REPOSITORY.DELETED_REPO_SUCCESS')
+                .subscribe(res=>this.errorHandler.info(res));
         }).catch(error => this.errorHandler.error(error));
     }
   }
 
-  cancelDeletion(message: ConfirmationAcknowledgement) {
-    console.log('Received message from cancelAction:' + JSON.stringify(message));
-  }
+  cancelDeletion(message: ConfirmationAcknowledgement) {}   
 
   ngOnInit(): void {
-    // this.projectId = this.route.snapshot.parent.params['id'];
-    // let resolverData = this.route.snapshot.parent.data;
-    // if(resolverData) {
-    //   this.hasProjectAdminRole = (<Project>resolverData['projectResolver']).has_project_admin_role;
-    // }
-    this.projectId = 1; //TODO: project agnostic;
-    this.hasProjectAdminRole = true; //TODO: Assume it as admin;
+    if(!this.projectId) {
+      this.errorHandler.error('Project ID cannot be unset.');
+      return;
+    }
+    if(!this.sessionInfo) {
+      this.errorHandler.error('Session info cannot be unset.');
+      return;
+    }
+    
+    this.hasProjectAdminRole = this.sessionInfo.hasProjectAdminRole || false;
 
     this.lastFilteredRepoName = '';
     this.retrieve();
@@ -110,7 +115,6 @@ export class RepositoryComponent implements OnInit {
   doSearchRepoNames(repoName: string) {
     this.lastFilteredRepoName = repoName;
     this.retrieve();
-
   }
 
   deleteRepo(repoName: string) {

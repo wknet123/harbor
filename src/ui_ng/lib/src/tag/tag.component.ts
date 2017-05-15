@@ -11,8 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, ViewChild, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 import { TagService } from '../service/tag.service';
 import { ErrorHandler } from '../error-handler/error-handler';
@@ -22,16 +21,14 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { ConfirmationMessage } from '../confirmation-dialog/confirmation-message';
 import { ConfirmationAcknowledgement } from '../confirmation-dialog/confirmation-state-message';
 
-import { Tag, TagView } from '../service/interface';
-
-// import { AppConfigService } from '../../app-config.service';
-// import { SessionService } from '../../shared/session.service';
-// import { Project } from '../../project/project';
+import { Tag, TagView, SessionInfo } from '../service/interface';
 
 import { TAG_TEMPLATE } from './tag.component.html';
 import { TAG_STYLE } from './tag.component.css';
 
 import { toPromise } from '../utils';
+
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'hbr-tag',
@@ -39,15 +36,17 @@ import { toPromise } from '../utils';
   styles: [ TAG_STYLE ]
 })
 export class TagComponent implements OnInit {
-  projectId: number;
-  repoName: string;
 
-  hasProjectAdminRole: boolean = false;
+  @Input() projectId: number;
+  @Input() repoName: string;
+  @Input() sessionInfo: SessionInfo;  
+
+  hasProjectAdminRole: boolean;
 
   tags: TagView[];
+
   registryUrl: string;
   withNotary: boolean;
-
   hasSignedIn: boolean;
 
   showTagManifestOpened: boolean;
@@ -75,9 +74,9 @@ export class TagComponent implements OnInit {
   }
 
   constructor(
-    private route: ActivatedRoute,
     private errorHandler: ErrorHandler,
     private tagService: TagService,
+    private translateService: TranslateService,
     private ref: ChangeDetectorRef){}
 
   confirmDeletion(message: ConfirmationAcknowledgement) {
@@ -95,39 +94,35 @@ export class TagComponent implements OnInit {
                 .then(
                 response => {
                     this.retrieve();
-                    this.errorHandler.info('REPOSITORY.DELETED_TAG_SUCCESS');
+                    this.translateService.get('REPOSITORY.DELETED_TAG_SUCCESS')
+                        .subscribe(res=>this.errorHandler.info(res));
                 }).catch(error => this.errorHandler.error(error));
             }
         }
     }
   }
 
-  cancelDeletion(message: ConfirmationAcknowledgement) {
-    console.log('Received message from cancelAction:' + JSON.stringify(message));
-  }
+  cancelDeletion(message: ConfirmationAcknowledgement) {}
 
   ngOnInit() {
-    // this.hasSignedIn = (this.session.getCurrentUser() !== null);
-    // let resolverData = this.route.snapshot.data;
-    // if(resolverData) {
-    //   this.hasProjectAdminRole = (<Project>resolverData['projectResolver']).has_project_admin_role;
-    // }
-    // this.projectId = this.route.snapshot.params['id'];
-    // this.repoName = this.route.snapshot.params['repo'];
-    // this.tags = [];
-    // this.registryUrl = this.appConfigService.getConfig().registry_url;
-    // this.withNotary = this.appConfigService.getConfig().with_notary;
+    if(!this.projectId) {
+      this.errorHandler.error('Project ID cannot be unset.');
+      return;
+    }
+    if(!this.repoName) {
+      this.errorHandler.error('Repo name cannot be unset.');
+      return;
+    }
+    if(!this.sessionInfo) {
+      this.errorHandler.error('Session info cannot be unset.');
+      return;
+    }
+    this.hasSignedIn = this.sessionInfo.hasSignedIn || false;
+    this.hasProjectAdminRole = this.sessionInfo.hasProjectAdminRole || false;
+    this.registryUrl = this.sessionInfo.registryUrl || '';
+    this.withNotary = this.sessionInfo.withNotary || false;
 
-    this.hasSignedIn = true;
-    this.hasProjectAdminRole = true;
-
-    this.projectId = 1;
-    this.repoName = 'library/nginx';
-    this.tags = [];
-    this.registryUrl = 'mydomain.com';
-    this.withNotary = true;
-
-    this.retrieve();
+    this.retrieve(); 
   }
 
   retrieve() {
@@ -140,12 +135,12 @@ export class TagComponent implements OnInit {
 
   listTags(tags: Tag[]): void {
     tags.forEach(t => {
-      let tag = Object.assign({}, this.initTagView);
+      let tag = this.initTagView;
       tag.tag = t.tag;
       let data = JSON.parse(t.manifest.history[0].v1Compatibility);
       tag.architecture = data['architecture'];
       tag.author = data['author'];
-      tag.signed = t.signed;
+      tag.signed = t.signed || -1;  
       tag.created = data['created'];
       tag.dockerVersion = data['docker_version'];
       tag.pullCommand = 'docker pull ' + this.registryUrl + '/' + t.manifest.name + ':' + t.tag;

@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { State } from 'clarity-angular';
 
@@ -23,8 +22,6 @@ export class ListRepositoryComponent {
   pageOffset: number = 1;
 
   constructor(
-    private router: Router,
-    // private searchTrigger: SearchTriggerService,
     private ref: ChangeDetectorRef) { 
     let hnd = setInterval(()=>ref.markForCheck(), 100);
     setTimeout(()=>clearInterval(hnd), 1000);
@@ -40,14 +37,5 @@ export class ListRepositoryComponent {
     if (this.repositories) {
       this.paginate.emit(state);
     }
-  }
-
-  public gotoLink(projectId: number, repoName: string): void {
-    // this.searchTrigger.closeSearch(true);
-
-    let linkUrl = ['harbor', 'tags', projectId, repoName];
-    this.router.navigate(linkUrl);
-  }
-
-
+  }  
 }

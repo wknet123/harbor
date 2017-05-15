@@ -1,7 +1,4 @@
 export const TAG_TEMPLATE = `
-<!--a *ngIf="hasSignedIn" [routerLink]="['/harbor', 'projects', projectId, 'repository']">&lt; {{'REPOSITORY.REPOSITORIES' | translate}}</a>
-<a *ngIf="!hasSignedIn" [routerLink]="['/harbor', 'sign-in']">&lt; {{'SEARCH.BACK' | translate}}</a-->
-
 <confirmation-dialog #confirmationDialog (confirmAction)="confirmDeletion($event)" (cancelAction)="cancelDeletion($event)"></confirmation-dialog>
 
 <clr-modal [(clrModalOpen)]="showTagManifestOpened" [clrModalStaticBackdrop]="staticBackdrop" [clrModalClosable]="closable">
@@ -43,7 +40,7 @@ export const TAG_TEMPLATE = `
         </a>
       </clr-dg-cell>
       <clr-dg-cell>{{t.author}}</clr-dg-cell>
-      <clr-dg-cell>{{t.created | date: 'short'}}</clr-dg-cell>
+      <clr-dg-cell>{{t.created}}</clr-dg-cell>
       <clr-dg-cell>{{t.dockerVersion}}</clr-dg-cell>
       <clr-dg-cell>{{t.architecture}}</clr-dg-cell>
       <clr-dg-cell>{{t.os}}</clr-dg-cell>

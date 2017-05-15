@@ -107,8 +107,7 @@ create table access_log (
  operation varchar(20) NOT NULL,
  op_time timestamp,
  primary key (log_id),
- INDEX pid_optime (project_id, op_time),
- FOREIGN KEY (project_id) REFERENCES project (project_id)
+ INDEX pid_optime (project_id, op_time)
 );
 
 create table repository (
@@ -170,6 +169,17 @@ create table replication_job (
  INDEX poid_uptime (policy_id, update_time)
  );
  
+create table img_scan_job (
+ id int NOT NULL AUTO_INCREMENT,
+ status varchar(64) NOT NULL,
+ repository varchar(256) NOT NULL,
+ tag   varchar(128) NOT NULL,
+ digest varchar(64),
+ creation_time timestamp default CURRENT_TIMESTAMP,
+ update_time timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+ PRIMARY KEY (id)
+ );
+
 create table properties (
  k varchar(64) NOT NULL,
  v varchar(128) NOT NULL,

@@ -87,7 +87,7 @@ export class CreateEditEndpointComponent implements AfterViewChecked {
     private errorHandler: ErrorHandler,
     private translateService: TranslateService) {}
 
-  openCreateEditTarget(editable: boolean, targetId?: number) {
+  openCreateEditTarget(editable: boolean, targetId?: number | string) {
     
     this.target = this.initEndpoint;
     this.editable = editable;
